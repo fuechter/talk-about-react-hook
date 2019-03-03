@@ -1,0 +1,85 @@
+import { Appear } from 'mdx-deck'
+export { future as theme } from 'mdx-deck/themes' 
+export { components } from 'mdx-deck-code-surfer'
+
+# React Hooks
+
+---
+
+Alguém aqui lembra sobre mixins?
+
+<Appear>
+    <div>Era um mecanismo de poder compartilhar "lifecycle" entre os componentes</div>
+    <div>Porém, em pouco tempo descobriram que eram bastante problemáticos</div>
+</Appear>
+
+---
+
+```javascript Exemplo de mixins
+var SubscriptionMixin = {
+  getInitialState: function() {
+    return {
+      comments: DataSource.getComments()
+    };
+  },
+
+  componentDidMount: function() {
+    DataSource.addChangeListener(this.handleChange);
+  },
+
+  componentWillUnmount: function() {
+    DataSource.removeChangeListener(this.handleChange);
+  },
+
+  handleChange: function() {
+    this.setState({
+      comments: DataSource.getComments()
+    });
+  }
+};
+
+var CommentList = React.createClass({
+  mixins: [SubscriptionMixin],
+
+  render: function() {
+    // Reading comments from state managed by mixin.
+    var comments = this.state.comments;
+    return (
+      <div>
+        {comments.map(function(comment) {
+          return <Comment comment={comment} key={comment.id} />
+        })}
+      </div>
+    )
+  }
+});
+
+module.exports = CommentList;
+----
+* > Exemplo de mixin
+1:21 > Mixins
+8:14 > Lifecycle
+24 > Uso de mixin
+27:28 > Poderia usar um estado gerado pelo mixin normalmente
+```
+
+
+---
+
+Mixins Considered Harmful
+
+https://reactjs.org/blog/2016/07/13/mixins-considered-harmful.html
+
+---
+
+Sobre components puros (functions)
+
+---
+
+Motivos do react hooks
+
+---
+
+Sintaxe do react hooks
+
+---
