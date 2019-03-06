@@ -1,17 +1,42 @@
-import { Appear } from 'mdx-deck'
+import { Appear, Notes } from 'mdx-deck'
+import { Invert, Split } from 'mdx-deck/layouts'
 export { future as theme } from 'mdx-deck/themes' 
 export { components } from 'mdx-deck-code-surfer'
+
+export default Split
+
+![](imgs/logo.png)
 
 # React Hooks 
 
 ---
 
+export default Invert
+
+Antes de mostrar o hooks, vamos falar um pouco <br/> sobre **mixins** e **pure functions**
+
+<Notes>
+  <ul>
+    <li>Falar sobre a importância de entender alguns mecanismos atuais para entender o hook</li>
+  </ul>
+</Notes>
+
+---
+
+export default Split
+
 Alguém aqui lembra sobre mixins?
 
 <Appear>
-    <div>Era um mecanismo de poder compartilhar "lifecycle" entre os componentes</div>
-    <div>Porém, em pouco tempo descobriram que eram bastante problemáticos</div>
+    <div>É uma forma de poder compartilhar "lifecycle" entre os componentes, podendo reutilizar vários casos comuns. A primeira vista parecia ser uma boa ideia.</div>
 </Appear>
+
+<Notes>
+  <ul>
+    <li>Mixins já vem desde da criação do react</li>
+    <li>Quando o react ainda era novo em 2014</li>
+  </ul>
+</Notes>
 
 ---
 
@@ -58,16 +83,38 @@ module.exports = CommentList;
 ----
 * > Exemplo de mixin
 1:21 > Mixins
-8:14 > Lifecycle
+2:6 > Initial State
+8:14 > Lifecycle em mixins
+16:20 > Inclusão de outras funções
 24 > Uso de mixin
 27:28 > Poderia usar um estado gerado pelo mixin normalmente
 ```
 
+<Notes>
+  <ul>
+    <li>É possível iniciar um estado em mixins</li>
+    <li>Assim como é possível incluir ciclos de vidas do react</li>
+    <li>Além de outras funções caso fosse necessário</li>
+  </ul>
+</Notes>
+
 ---
 
-Mixins Considered Harmful
+export default Split
 
-https://reactjs.org/blog/2016/07/13/mixins-considered-harmful.html
+
+<img height="700px" src="https://media.giphy.com/media/eIPM3j6YXHKXC/giphy.gif"/>
+
+Porém, em pouco tempo descobriram <br/> que eram bastante problemáticos, por causa da sua abordagem
+
+<Appear>
+  <div>dependência implícita</div>
+  <div>conflito de nomes</div>
+  <div>
+    <a href='https://bit.ly/2VK97X1' target='__blank'>Mixins Considered Harmful</a><br/>
+    by Dan Abramov
+  </div>
+</Appear>
 
 ---
 
@@ -114,7 +161,26 @@ Motivos do react hooks
 
 ---
 
-Sintaxe do react hooks
+```javascript Sintaxe do react hooks
+import React, { useState } from 'react';
+
+function Example() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+----
+* > Exemplo de react hooks
+1[5:5], 4 > Uso de hooks para state
+8:9 > Utilizando a função de state
+```
 
 ---
 
