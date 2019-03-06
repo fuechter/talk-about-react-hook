@@ -2,7 +2,7 @@ import { Appear } from 'mdx-deck'
 export { future as theme } from 'mdx-deck/themes' 
 export { components } from 'mdx-deck-code-surfer'
 
-# React Hooks
+# React Hooks 
 
 ---
 
@@ -63,7 +63,6 @@ module.exports = CommentList;
 27:28 > Poderia usar um estado gerado pelo mixin normalmente
 ```
 
-
 ---
 
 Mixins Considered Harmful
@@ -72,14 +71,79 @@ https://reactjs.org/blog/2016/07/13/mixins-considered-harmful.html
 
 ---
 
-Sobre components puros (functions)
+Sobre componentes "puros" (functions)
+
+<Appear>
+  <div>São componentes mais "fácil" de escrever, devido a sua leitura</div>
+  <div>Porém não é possível utilizar states</div>
+  <div>* a não ser se utilizar <a href="https://github.com/acdlite/recompose" target="__blank">recompose</a></div>
+  <div>Porém sempre que era necessário usar algum ciclo de vida, tinha que transformar em class</div>
+</Appear>
+
+---
+
+```javascript Componentes puros
+export default function UmComponentQualquer ({ user }) {
+
+  const name = getName(user);
+  const avatar = getAvatar(user);
+
+  return (
+    <div>
+      <User {...{name, avatar}} />
+    </div>
+  );
+}
+----
+* > Exemplo de componente puro
+```
+
+---
+
+Então vamos finalmente falar sobre o react hooks
+
+É apenas mais uma forma de escrever um componente
 
 ---
 
 Motivos do react hooks
+
+<Appear>
+  <div>O lifecycle fica bem mais fácil de entender</div>
+</Appear>
 
 ---
 
 Sintaxe do react hooks
 
 ---
+
+Vantagens do react hooks
+
+<Appear>
+  <div>É possivel usar uma abordagem de lifecycle e state dentro de funções pura</div>
+  <div>É possivel compartilhar "lifecycles" e comportamentos que são inerentes ao React</div>
+  <div>São mais fácil de ler</div>
+</Appear>
+
+---
+
+Reescrevendo um componente class para hooks
+
+---
+
+Algumas regras sobre o "hooks"
+
+<Appear>
+  <div>Deve ser chamado apenas em "top-level"</div>
+</Appear>
+
+---
+
+Algumas observações sobre o "hooks"
+
+<Appear>
+  <div>Não vai eliminar o jeito de escrever componentes em class (e eles não tem nem intenção)</div>
+  <div>Funciona se usar um componente escrito em hooks, com outros componentes escrito em classes? Sim</div>
+  <div>Não precisar começar um projeto novo para começar usar (a não ser que estiver numa versão MUITO antiga do react)</div>
+</Appear>
