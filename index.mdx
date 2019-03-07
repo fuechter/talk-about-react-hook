@@ -7,7 +7,7 @@ export default Split
 
 ![](imgs/logo.png)
 
-# React Hooks 
+### React Hooks 
 
 ---
 
@@ -102,9 +102,9 @@ module.exports = CommentList;
 
 export default Split
 
-<img height="700px" src="https://media.giphy.com/media/eIPM3j6YXHKXC/giphy.gif"/>
+<img src="https://media.giphy.com/media/eIPM3j6YXHKXC/giphy.gif"/>
 
-Porém, em pouco tempo descobriram <br/> que eram bastante problemáticos, por causa da sua abordagem
+#### Porém, em pouco tempo descobriram <br/> que eram bastante problemáticos, por causa da sua abordagem
 
 <Appear>
   <div>dependência implícita</div>
@@ -147,7 +147,7 @@ export default function UmComponentQualquer ({ user }) {
 
 export default Invert
 
-### Então vamos finalmente falar sobre o react hooks
+#### Então vamos finalmente falar sobre o react hooks
 
 <Notes>
   É quase "apenas" mais uma forma de escrever um componente, porém traz algumas caracteristicas novas
@@ -191,8 +191,8 @@ function Example() {
 Vantagens do react hooks
 
 <Appear>
-  <div>abordagem de lifecycle e state dentro de funções</div>
-  <div>compartilhar "lifecycles" e comportamentos que são inerentes ao React</div>
+  <div>abordagem de "lifecycle" e state dentro de funções</div>
+  <div>compartilhar "lifecycle" e comportamentos que são inerentes ao React</div>
   <div>mais fácil de ler, devido a sua lógica "cronológica"</div>
 </Appear>
 
@@ -343,8 +343,38 @@ function MyResponsiveComponent() {
 }
 ----
 * > Exemplo
-1:12 > Custom hooks
+1:13 > Custom hooks
 14:19 > Usando custom hooks
+```
+
+---
+
+```javascript Perfomance Effects
+import React, { useEffect, useState } from 'react'
+
+export default function InfoUser(props) {
+
+  const [ user, setUser ] = useState({});
+
+  useEffect(() => {
+
+    fetch('https://...')
+    .then(user => setUser(user));
+
+  }, [props.id])
+
+
+  return (
+    <div>
+      <label>{user.name}</label>
+    </div>
+  );
+}
+----
+* > Exemplo
+7:12 > Effects
+12[4:8] > Condições memorizadas
+
 ```
 
 ---
@@ -353,15 +383,46 @@ Algumas regras sobre o "hooks"
 
 <Appear>
   <div>Deve ser chamado apenas em "top-level"</div>
-  <div>Não pode ser chamado dentro de loops</div>
+  <div>Não pode ser chamado dentro de loops/statements</div>
+  <div>Devem ser usado apenas porfunções react</div>
   <div>https://reactjs.org/docs/hooks-rules.html</div>
 </Appear>
 
 ---
 
-ESLint para Hooks
+```javascript Hooks Rules
+functon Component() {
+  const [ count, setCount ] = useState(0);
 
-https://www.npmjs.com/package/eslint-plugin-react-hooks
+  // Error
+  if (someCondition) {
+    const [ value, setValue ] = useState(0); 
+  }
+
+  return ...
+}
+----
+* > Exemplo
+2 > Jeito certo
+4:7 > Jeito errado
+```
+
+---
+
+```json ESLint para Hooks
+{
+  "plugins": [
+    // ...
+    "react-hooks"
+  ],
+  "rules": {
+    // ...
+    "react-hooks/rules-of-hooks": "error"
+  }
+}
+----
+* > https://bit.ly/2tWThMS
+```
 
 ---
 
