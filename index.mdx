@@ -102,7 +102,6 @@ module.exports = CommentList;
 
 export default Split
 
-
 <img height="700px" src="https://media.giphy.com/media/eIPM3j6YXHKXC/giphy.gif"/>
 
 Porém, em pouco tempo descobriram <br/> que eram bastante problemáticos, por causa da sua abordagem
@@ -118,15 +117,14 @@ Porém, em pouco tempo descobriram <br/> que eram bastante problemáticos, por c
 
 ---
 
+export default Invert
+
 Sobre componentes "puros" (functions)
 
 <Appear>
-  <div>São componentes mais "fácil" de escrever, devido a sua leitura</div>
-  <div>Porém não é possível utilizar states</div>
-  <div>* a não ser se utilizar <a href="https://github.com/acdlite/recompose" target="__blank">recompose</a></div>
-  <div>Porém sempre que era necessário usar algum ciclo de vida, tinha que transformar em class</div>
+  <div>são componentes mais "fácil" de escrever devido a sua leitura,<br/> porém não é possível 
+  utilizar states e sempre que era necessário usar <br/>algum "lifecycle" ou state, tinha que transformar em class</div>
 </Appear>
-
 ---
 
 ```javascript Componentes puros
@@ -147,16 +145,22 @@ export default function UmComponentQualquer ({ user }) {
 
 ---
 
-Então vamos finalmente falar sobre o react hooks
+export default Invert
 
-É apenas mais uma forma de escrever um componente
+### Então vamos finalmente falar sobre o react hooks
+
+<Notes>
+  É quase "apenas" mais uma forma de escrever um componente, porém traz algumas caracteristicas novas
+</Notes>
 
 ---
 
-Motivos do react hooks
+Motivação por trás do react hooks
 
 <Appear>
-  <div>O lifecycle fica bem mais fácil de entender</div>
+  <div>É dificil compartilhar "lifecycle"</div>
+  <div>Componentes complexos se tornam mais díficil de entender</div>
+  <div>Classes podem ser confuso*</div>
 </Appear>
 
 ---
@@ -187,14 +191,161 @@ function Example() {
 Vantagens do react hooks
 
 <Appear>
-  <div>É possivel usar uma abordagem de lifecycle e state dentro de funções pura</div>
-  <div>É possivel compartilhar "lifecycles" e comportamentos que são inerentes ao React</div>
-  <div>São mais fácil de ler</div>
+  <div>abordagem de lifecycle e state dentro de funções</div>
+  <div>compartilhar "lifecycles" e comportamentos que são inerentes ao React</div>
+  <div>mais fácil de ler, devido a sua lógica "cronológica"</div>
 </Appear>
 
 ---
 
+Algumas funções básicas do react-hooks
+
+- useState
+- useEffect
+- useContext
+
+---
+
+```javascript Exemplo básico de useContext
+import React, { useContext } from "react";
+
+const NumberContext = React.createContext();
+
+function App() {
+  return (
+    <NumberContext.Provider value={42}>
+      <div>
+        <Display />
+      </div>
+    </NumberContext.Provider>
+  );
+}
+
+function Display() {
+  return (
+    <NumberContext.Consumer>
+      {value => <div>The answer is {value}.</div>}
+    </NumberContext.Consumer>
+  );
+}
+
+function Display() {
+  const value = useContext(NumberContext);
+  return <div>The answer is {value}.</div>;
+}
+----
+* > Exemplos
+1 > Importa o useContext
+3:13 > Criando um contexto
+15:21 > Sem hooks
+23:26 > Com hooks
+```
+
+---
+
+Funções adicionais
+
+- useReducer
+- useCallback
+- useMemo
+- useRef
+- useImperativeHandle
+- useLayoutEffect
+- useDebugValue
+
+---
+
+export default Invert
+
 Reescrevendo um componente class para hooks
+
+---
+
+```javascript Class React
+export default class MyResponsiveComponent extends React.Component {
+  state = {
+    width: window.innerWidth,
+  }
+
+  handleResize = () => this.setState({width: window.innerWidth});
+
+  componentDidMount () {
+    window.addEventListener('resize', this.handleResize);
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.handleResize);
+  }
+
+  render () {
+    return (
+      <p>Window width is {this.state.width}</p>
+    );
+  }
+}
+----
+* > Exemplo de class
+2:4 > Inicializando o state
+6 > Criando uma função que gerenciar o estado
+8:14 > Adicionando os eventos
+16:20 > Renderizando o componente
+```
+
+---
+
+```javascript Hooks
+function MyResponsiveComponent() {
+
+  const [width, setWidth] = useState(window.innerWidth);
+  
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  });
+
+  return (
+    <p>Window width is {width}</p>
+  );
+}
+----
+* > Exemplo de hooks
+3 > Inicializando o state
+5:7, 11 > Executando o componentDidMount
+8:10 > Executando o componentWillUnmount
+13:15 > 16:20 > Renderizando o componente
+```
+
+---
+
+```javascript Custom Hooks
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
+  
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  });
+  
+  return width;
+}
+
+function MyResponsiveComponent() {
+  const width = useWindowWidth(); // Our custom Hook
+  return (
+    <p>Window width is {width}</p>
+  );
+}
+----
+* > Exemplo
+1:12 > Custom hooks
+14:19 > Usando custom hooks
+```
 
 ---
 
@@ -202,7 +353,15 @@ Algumas regras sobre o "hooks"
 
 <Appear>
   <div>Deve ser chamado apenas em "top-level"</div>
+  <div>Não pode ser chamado dentro de loops</div>
+  <div>https://reactjs.org/docs/hooks-rules.html</div>
 </Appear>
+
+---
+
+ESLint para Hooks
+
+https://www.npmjs.com/package/eslint-plugin-react-hooks
 
 ---
 
@@ -210,6 +369,19 @@ Algumas observações sobre o "hooks"
 
 <Appear>
   <div>Não vai eliminar o jeito de escrever componentes em class (e eles não tem nem intenção)</div>
-  <div>Funciona se usar um componente escrito em hooks, com outros componentes escrito em classes? Sim</div>
-  <div>Não precisar começar um projeto novo para começar usar (a não ser que estiver numa versão MUITO antiga do react)</div>
+  <div>Funciona se usar um componente escrito em hooks, em outros componentes escrito em classes e vice-versa? Sim</div>
+  <div>Não precisar começar um projeto novo para começar usar (a não ser que estiver numa versão MUITO antiga do react), basta instalar a versão minima 16.8</div>
 </Appear>
+
+---
+
+Sim, já fizeram um "awesome"
+
+https://bit.ly/2PXK978
+
+---
+
+Caso alguém queira ler um pouco mais sobre hooks
+
+https://bit.ly/2ORRHZm
+
