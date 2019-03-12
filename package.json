@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/alexandref93/talk-about-react-hook#readme",
   "dependencies": {
+    "@mdx-deck/export": "^2.0.0-5",
     "mdx-deck-code-surfer": "^0.5.5"
   },
   "devDependencies": {

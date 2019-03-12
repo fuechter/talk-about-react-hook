@@ -1,5 +1,6 @@
 import { Appear, Notes } from 'mdx-deck'
 import { Invert, Split } from 'mdx-deck/layouts'
+import ShowComponent from './components/ShowComponent'
 export { future as theme } from 'mdx-deck/themes' 
 export { components } from 'mdx-deck-code-surfer'
 
@@ -147,7 +148,7 @@ export default function UmComponentQualquer ({ user }) {
 
 export default Invert
 
-#### Então vamos finalmente falar sobre o react hooks
+#### Então, vamos finalmente falar sobre o react hooks
 
 <Notes>
   É quase "apenas" mais uma forma de escrever um componente, porém traz algumas caracteristicas novas
@@ -218,6 +219,9 @@ function AComponent () {
     lastName: 'Ravioli',
   });
 
+  // vai causar re-render
+  setCompany('Outra qualquer');
+
   return (
     <div>
       ...
@@ -230,7 +234,7 @@ function AComponent () {
 5 > Pode ser numero
 6 > Pode ser string
 7:10 > Pode ser objeto
-* > Literalmente pode ser qualquer coisa
+12:13 > Re-render
 ```
 
 ---
@@ -279,6 +283,23 @@ function OtherComponent (props) {
     Logger.userEnterOnPage(user);
   }, [user, qualquerOutraCoisa]);
 
+  useEffect(() => {
+
+    window.addEventListener('resize', hadleResize)
+
+    return () => {
+      window.removeEventListener('resize', hadleResize )
+    }
+  }, [])
+
+  useEffect(() => {
+    Chat.subscribe(idChannel)
+
+    return () => {
+      Chat.unsubscribe(idChannel)
+    }
+  }, [idChannel])
+
   return (
     <div>
       ...
@@ -295,7 +316,96 @@ function OtherComponent (props) {
 25:27 > useEffect + shouldComponentUpdate
 27[3:7] > shouldComponentUpdate
 31[3:9] > Multíplas condições
+33:40 > CleanUp roda a cada re-render
+40 > Caso queira que o useEffect rode apenas uma vez
+42:48 > Um caso real de useEffect com cleanUp controlado
 ```
+---
+
+```javascript useEffect básico
+function Example() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    document.title = `You clicked ${count} times`;
+  });
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+```
+
+---
+
+import AlterTitle from './components/AlterTitle'
+
+<ShowComponent>
+  <AlterTitle />
+</ShowComponent>
+
+---
+
+```javascript Fazendo um loop infinito com useEffect
+function CountAutomatic () {
+  const [ count, setCount ] = useState(0);
+
+  useEffect(() => {
+    setTimeout(() => setCount(count + 1), 3000)
+  })
+
+  return (
+    <div>{count}</div>
+  )
+}
+----
+* > Loop
+```
+---
+
+import CountAutomatic from './components/CountAutomatic'
+
+<ShowComponent>
+  <CountAutomatic />
+</ShowComponent>
+
+
+---
+
+```javascript useEffect cleanUp
+function CleanUp() {
+  useEffect(() => {
+    return () => {
+      alert('desmontando um component')
+    }
+  });
+
+  useEffect(() => () => {
+    alert('desmontando um component')
+  });
+
+  return <div>{count}</div>;
+}
+----
+* > Clean Up
+2:6 > Jeito "tradicional"
+8:10 > Jeito mais rápido se for só um clean up
+```
+
+---
+
+
+import CleanUp from './components/CleanUp'
+
+<ShowComponent>
+  <CleanUp />
+</ShowComponent>
+
 ---
 
 Apenas lembrando
@@ -305,6 +415,10 @@ Apenas lembrando
   <div>aborda componentDidMount, componentDidUpdate, componentWillUnmount, shouldComponentUpdate</div>
   <div>a unica coisa que não trata AINDA, é o componentDidCatch</div>
 </Appear>
+
+---
+
+Mas esquece esses "lifecycles"  (pra não ficar confundindo), no hooks, são apenas abordagens aperecidas, mas tem formas diferente de pensar
 
 ---
 
@@ -406,7 +520,7 @@ function MyResponsiveComponent() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  });
+  }, []);
 
   return (
     <p>Window width is {width}</p>
@@ -432,7 +546,7 @@ function useWindowWidth() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  });
+  }, []);
   
   return width;
 }
@@ -451,33 +565,11 @@ function MyResponsiveComponent() {
 
 ---
 
-```javascript Perfomance Effects
-import React, { useEffect, useState } from 'react'
+import ResizeWidth from './components/ResizeWidth';
 
-export default function InfoUser(props) {
+Component em ação
 
-  const [ user, setUser ] = useState({});
-
-  useEffect(() => {
-
-    fetch('https://...')
-    .then(user => setUser(user));
-
-  }, [props.id])
-
-
-  return (
-    <div>
-      <label>{user.name}</label>
-    </div>
-  );
-}
-----
-* > Exemplo
-7:12 > Effects
-12[4:8] > Condições memorizadas
-
-```
+<ResizeWidth />
 
 ---
 
@@ -486,27 +578,43 @@ Algumas regras sobre o "hooks"
 <Appear>
   <div>Deve ser chamado apenas em "top-level"</div>
   <div>Não pode ser chamado dentro de loops/statements</div>
-  <div>Devem ser usado apenas porfunções react</div>
-  <div>https://reactjs.org/docs/hooks-rules.html</div>
+  <div>Devem ser usado apenas por funções pura react</div>
+  <div><a href="https://reactjs.org/docs/hooks-rules.html">https://reactjs.org/docs/hooks-rules.html</a></div>
 </Appear>
 
 ---
 
 ```javascript Hooks Rules
-functon Component() {
-  const [ count, setCount ] = useState(0);
+function Component() {
 
-  // Error
-  if (someCondition) {
-    const [ value, setValue ] = useState(0); 
+  // Errado
+  if (algumaCondicao) {
+    useEffect(() => {
+      ...
+    })
   }
 
-  return ...
+  // Errado
+  tasks.map((task) => {
+    const [ value, setValue] = useState(0)
+    ...
+  })
+
+  // Certo
+  const [ value, setValue] = useState(0)
+
+  tasks.map((task) => {
+    if (condition) {
+      setValue(<value>)
+    }
+  })
+
 }
 ----
-* > Exemplo
-2 > Jeito certo
-4:7 > Jeito errado
+3:8 > Errado
+9:14 > Errado
+15:23 > Certo
+17[6], 21 > Pode usar as funções gerada pelo Hooks dentro de condições/loops
 ```
 
 ---
@@ -547,4 +655,8 @@ https://bit.ly/2PXK978
 Caso alguém queira ler um pouco mais sobre hooks
 
 https://bit.ly/2ORRHZm
+
+Um detalhamento mais a fundo do useEffect
+
+https://bit.ly/2EOEwk8
 
